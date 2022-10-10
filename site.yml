@@ -1,0 +1,4 @@
+---
+
+- name: Pointing Local Repo
+  import_playbook: repo.yml
