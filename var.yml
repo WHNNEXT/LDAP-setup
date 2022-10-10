@@ -3,6 +3,6 @@ ldap_client_modules: [ 'openldap-clients', 'nss-pam-ldapd' ]
 repo_server: 10.0.0.18
 epel_repo_module: "http://{{ repo_server }}/epel/epel-release-latest-7.noarch.rpm"
 
-olc_root_pw: "ldppassword"
+olc_root_pw: "password"
 olc_Suffix: "dc=haden,dc=local"
 olc_Root_DN: "cn=ldapadm,{{ olc_Suffix }}"
