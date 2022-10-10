@@ -1,0 +1,27 @@
+---
+
+- name: Red Hat 7.9 Repo
+  yum_repository:
+    name: rhel7dvd
+    description: Red Hat Enterprise Linux 7.9
+    enabled: yes
+    gpgcheck: yes
+    baseurl: "http://{{ repo_server }}/rhel7/"
+    gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
+
+- name: Install Epel Repo
+  yum:
+    name: "{{ epel_repo_module }}"
+    state: present
+
+- name: Backup epel repo file
+  command: mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.bk
+
+- name: Edit Epel Repo file
+  yum_repository:
+    name: epel
+    description: Extra Packages for Red Hat Enterprise Linux 7.9
+    enabled: yes
+    gpgcheck: yes
+    baseurl: "http://{{ repo_server }}/epel/"
+    gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
