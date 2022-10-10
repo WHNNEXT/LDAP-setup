@@ -1,0 +1,9 @@
+[ldap_server]
+10.0.0.164
+
+[ldap_client]
+10.0.0.167
+
+[ldap:children]
+ldap_server
+ldap_client
