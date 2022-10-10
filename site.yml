@@ -2,3 +2,6 @@
 
 - name: Pointing Local Repo
   import_playbook: repo.yml
+
+- name: LDAP Server Setup
+  import_playbook: ldap-server.yml
