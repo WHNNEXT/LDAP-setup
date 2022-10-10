@@ -1,0 +1,50 @@
+---
+
+- name: Install Necessary packages
+  yum: name={{ item }} update_cache=yes state=latest
+  loop: "{{ ldap_server_modules }}"
+
+- name: Check if OpenLdap is running if not start it
+  service:
+    name: slapd
+    state: started
+    enabled: yes
+
+- name: ldapmodify olcDatabase={2}hdb,cn=config
+  ldap_attr:
+    dn: olcDatabase={2}hdb,cn=config
+    name: "{{ item.key }}"
+    values: "{{ item.value }}"
+    state: exact
+  with_dict:
+    olcSuffix: "{{ olc_Suffix }}"
+    olcRootDN: "{{ olc_Root_DN }}"
+    olcRootPW: "{{ olc_root_pw }}"
+
+- name: ldapmodify olcDatabase={1}monitor,cn=config
+  ldap_attr:
+    dn: olcDatabase={1}monitor,cn=config
+    name: olcAccess
+    values:
+      - >-
+        {0}to *
+        by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read
+        by dn.base="{{ olc_Root_DN }}" read
+        by * none
+    state: exact
+
+- name: Copying sample database configuration file
+  copy:
+    src: /usr/share/openldap-servers/DB_CONFIG.example
+    dest: /var/lib/ldap/DB_CONFIG
+    remote_src: yes
+    owner: ldap
+    group: ldap
+
+- name: Load schema from file
+  command: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ item }}
+  loop:
+    - "cosine.ldif"
+    - "nis.ldif"
+    - "inetorgperson.ldif"
+
