@@ -9,7 +9,7 @@
     baseurl: "http://{{ repo_server }}/rhel7/"
     gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
 
-- name: Install Epel Repo
+- name: Epel Repo
   yum:
     name: "{{ epel_repo_module }}"
     state: present
