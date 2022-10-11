@@ -3,6 +3,14 @@ ldap_client_modules: [ 'openldap-clients', 'nss-pam-ldapd' ]
 repo_server: 10.0.0.18
 epel_repo_module: "http://{{ repo_server }}/epel/epel-release-latest-7.noarch.rpm"
 
-olc_root_pw: "password"
+olc_root_pw: "ldppassword"
 olc_Suffix: "dc=haden,dc=local"
 olc_Root_DN: "cn=ldapadm,{{ olc_Suffix }}"
+
+ldap_new_usr: "mack"
+ldap_new_usr_pw: "pass123"
+ldap_new_usr_gecos:  "{{ ldap_new_usr }} [Admin (at) haden]"
+ldap_new_usr_uid: 9999
+ldap_new_usr_gid: 100
+
+#ldap_del_usr: ""
