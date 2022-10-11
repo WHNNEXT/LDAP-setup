@@ -5,3 +5,6 @@
 
 - name: LDAP Server Setup
   import_playbook: ldap-server.yml
+
+- name: LDAP Client Setup
+  import_playbook: ldap-client.yml
