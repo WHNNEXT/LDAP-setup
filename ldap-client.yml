@@ -1,0 +1,10 @@
+---
+
+- name: LDAP Client Install
+  hosts: ldap_client
+  gather_facts: true
+  become: yes
+  vars_files:
+   - var.yml
+  roles:
+    - ldap_client
