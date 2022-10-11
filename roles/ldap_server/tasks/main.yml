@@ -48,3 +48,87 @@
     - "nis.ldif"
     - "inetorgperson.ldif"
 
+- name: Make sure we have a parent entry for haden
+  ldap_entry:
+    dn: "{{ olc_Suffix }}"
+    objectClass: 
+      - top
+      - domain
+    attributes:
+      dc: haden
+    bind_dn: "{{ olc_Root_DN }}"
+    bind_pw: "{{ olc_root_pw }}"
+
+- name: Make sure we have a parent entry for admin
+  ldap_entry:
+    dn: "cn=ldapadm,{{ olc_Suffix }}"
+    objectClass: organizationalRole
+    attributes:
+      description: LDAP Manager
+      cn: ldapadm
+    bind_dn: "{{ olc_Root_DN }}"
+    bind_pw: "{{ olc_root_pw }}"
+
+- name: Make sure we have a parent entry for People
+  ldap_entry:
+    dn: "ou=People,{{ olc_Suffix }}"
+    objectClass: organizationalUnit
+    attributes:
+      ou: People
+    bind_dn: "{{ olc_Root_DN }}"
+    bind_pw: "{{ olc_root_pw }}"
+
+- name: Make sure we have a parent entry for Group
+  ldap_entry:
+    dn: "ou=Group,{{ olc_Suffix }}"
+    objectClass: organizationalUnit
+    attributes:
+      ou: Group
+    bind_dn: "{{ olc_Root_DN }}"
+    bind_pw: "{{ olc_root_pw }}"
+
+- name: Add new User
+  ldap_entry:
+    dn: "uid={{ ldap_new_usr }},ou=People,{{ olc_Suffix }}"
+    objectClass: 
+      - top
+      - account
+      - posixAccount
+      - shadowAccount
+    attributes:
+      cn: "{{ ldap_new_usr }}"
+      uid: "{{ ldap_new_usr }}"
+      uidNumber: "{{ ldap_new_usr_uid }}"
+      gidNumber: "{{ ldap_new_usr_gid }}"
+      homeDirectory: "/home/{{ ldap_new_usr }}"
+      loginShell: /bin/bash
+      gecos: "{{ ldap_new_usr_gecos }}"
+      userPassword: "{{ ldap_new_usr_pw }}"
+      shadowLastChange: 17058
+      shadowMin: 0
+      shadowMax: 99999
+      shadowWarning: 7
+    bind_dn: "{{ olc_Root_DN }}"
+    bind_pw: "{{ olc_root_pw }}"
+
+# - name: Delete User
+#   ldap_entry:
+#     dn: "uid={{ ldap_del_usr }},ou=People,{{ olc_Suffix }}"
+#     state: absent
+#     bind_dn: "{{ olc_Root_DN }}"
+#     bind_pw: "{{ olc_root_pw }}"
+
+- name: permit traffic in default zone for LDAP service
+  firewalld:
+    service: ldap
+    permanent: yes
+    state: enabled
+    immediate: true
+
+- name: Enable LDAP logging
+  lineinfile:
+    path: /etc/rsyslog.conf
+    line: local4.* /var/log/ldap.log
+
+- name: Restart rsyslog
+  systemd: state=restarted name=rsyslog
