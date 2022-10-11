@@ -1,0 +1,11 @@
+---
+
+- name: Install Necessary packages
+  yum: name={{ item }} update_cache=yes state=latest
+  loop: "{{ ldap_client_modules }}"
+
+- name: Add LDAP server for single sign-on
+  command: authconfig --enableldap --enableldapauth --ldapserver="{{ groups['ldap_server'][0] }}" --ldapbasedn="{{ olc_Suffix }}" --enablemkhomedir --update
+
+- name: Restart nslcd
+  systemd: state=restarted name=nslcd
